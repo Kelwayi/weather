@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 Vålerenga Vær 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink:      #ff8fab;
+    --pink-lt:   #ffc8dd;
+    --pink-bg:   #fff0f5;
+    --lavender:  #c8b6e2;
+    --mint:      #b5ead7;
+    --peach:     #ffcba4;
+    --yellow:    #fde68a;
+    --sky:       #bde0fe;
+    --white:     #ffffff;
+    --text:      #5c3d5e;
+    --text-soft: #b49bbf;
+    --shadow:    rgba(255, 143, 171, 0.22);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--pink-bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 20px 28px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; right: 0; height: 8px;
+    background: repeating-linear-gradient(90deg,
+      var(--pink) 0px, var(--pink) 20px,
+      var(--lavender) 20px, var(--lavender) 40px,
+      var(--mint) 40px, var(--mint) 60px,
+      var(--peach) 60px, var(--peach) 80px,
+      var(--yellow) 80px, var(--yellow) 100px,
+      var(--sky) 100px, var(--sky) 120px);
+    z-index: 200;
+  }
+
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .star { position: absolute; animation: floatStar linear infinite; opacity: 0.3; }
+  @keyframes floatStar {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.3; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── Carousel ── */
+  .carousel-outer {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    z-index: 10;
+  }
+
+  .progress-wrap {
+    width: 100%; height: 4px;
+    background: var(--pink-lt); border-radius: 4px;
+    margin-bottom: 14px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink), var(--lavender));
+    border-radius: 4px;
+    width: 0%;
+  }
+
+  .slide-label {
+    text-align: center;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 10px;
+    min-height: 16px;
+  }
+
+  .nav-arrows {
+    display: flex; justify-content: space-between;
+    position: absolute; top: 50%; left: -50px; right: -50px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .nav-btn {
+    pointer-events: all;
+    background: var(--white); border: 2.5px solid var(--pink-lt);
+    border-radius: 50%; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; color: var(--pink); font-weight: 900;
+    box-shadow: 0 3px 14px var(--shadow);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-btn:hover { background: var(--pink-lt); transform: scale(1.12); }
+
+  /* Slides viewport */
+  .slides-viewport {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .slides-track {
+    display: flex;
+    transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .slide {
+    min-width: 100%;
+    flex-shrink: 0;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border: 2.5px solid var(--pink-lt);
+    border-radius: 30px;
+    box-shadow: 0 8px 40px var(--shadow);
+    padding: 30px 30px 26px;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--text-soft); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 7px;
+  }
+
+  /* Dots */
+  .dots {
+    display: flex; justify-content: center; gap: 8px;
+    margin-top: 16px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--pink-lt); cursor: pointer;
+    transition: background 0.3s, width 0.3s, border-radius 0.3s;
+    border: none; padding: 0;
+  }
+  .dot.active { background: var(--pink); width: 24px; border-radius: 4px; }
+  .dot:hover { background: var(--pink); }
+
+  /* Pause indicator */
+  .pause-badge {
+    position: absolute; top: 50px; right: 0;
+    background: var(--pink-lt); border-radius: 12px;
+    padding: 3px 9px; font-size: 10px; font-weight: 800;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--pink); opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .carousel-outer:hover .pause-badge { opacity: 1; }
+
+  /* ── Hero ── */
+  .hero-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex: 1; gap: 20px;
+  }
+  .hero-top { display: flex; align-items: center; gap: 22px; }
+  .weather-icon {
+    font-size: 88px; line-height: 1;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 6px 14px rgba(255,143,171,0.35));
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+  .temp {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 80px; font-weight: 700; color: var(--text);
+    line-height: 1; text-shadow: 3px 3px 0 var(--pink-lt);
+  }
+  .temp sup { font-size: 32px; vertical-align: super; color: var(--pink); }
+  .condition { font-size: 21px; font-weight: 800; color: var(--pink); margin-top: 4px; }
+  .feels-like { font-size: 12px; font-weight: 700; color: var(--text-soft); margin-top: 3px; }
+  .location-tag { font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 5px; }
+  .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .hero-pill {
+    background: var(--pink-bg); border: 2px solid var(--pink-lt);
+    border-radius: 20px; padding: 6px 13px;
+    font-size: 13px; font-weight: 800; color: var(--text);
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ── Calendar ── */
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cal-month-name { font-family: 'Zen Maru Gothic', sans-serif; font-size: 21px; font-weight: 700; color: var(--pink); }
+  .cal-nav { display: flex; gap: 7px; }
+  .cal-btn {
+    background: var(--pink-bg); border: 2px solid var(--pink-lt);
+    border-radius: 9px; width: 28px; height: 28px;
+    cursor: pointer; font-size: 14px; color: var(--pink); font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .cal-btn:hover { background: var(--pink-lt); transform: scale(1.1); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; flex: 1; }
+  .cal-dow { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-soft); text-align: center; padding-bottom: 4px; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text);
+    cursor: default; position: relative;
+  }
+  .cal-day.other-month { color: var(--text-soft); opacity: 0.35; }
+  .cal-day.sunday { color: #e05d7a; }
+  .cal-day.today {
+    background: var(--pink); color: white; font-weight: 900;
+    box-shadow: 0 3px 10px rgba(255,143,171,0.5);
+    animation: pulseToday 2s ease-in-out infinite;
+  }
+  @keyframes pulseToday {
+    0%,100%{box-shadow:0 3px 10px rgba(255,143,171,0.5)}
+    50%{box-shadow:0 3px 18px rgba(255,143,171,0.8)}
+  }
+
+  /* ── Details ── */
+  .detail-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; flex: 1; align-content: start; }
+  .d-tile { background: var(--pink-bg); border: 2px solid var(--pink-lt); border-radius: 16px; padding: 14px 8px; text-align: center; }
+  .d-tile:nth-child(1){border-color:var(--lavender)} .d-tile:nth-child(2){border-color:var(--mint)}
+  .d-tile:nth-child(3){border-color:var(--peach)}    .d-tile:nth-child(4){border-color:var(--yellow)}
+  .d-tile:nth-child(5){border-color:var(--sky)}      .d-tile:nth-child(6){border-color:var(--pink-lt)}
+  .d-icon { font-size: 24px; margin-bottom: 5px; display: block; }
+  .d-val  { font-size: 18px; font-weight: 900; color: var(--text); display: block; }
+  .d-lbl  { font-size: 10px; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase; color: var(--text-soft); margin-top: 2px; display: block; }
+
+  /* ── Sun ── */
+  .sun-row { display: flex; gap: 12px; margin-bottom: 18px; }
+  .sun-half { flex: 1; background: var(--pink-bg); border: 2px solid var(--yellow); border-radius: 16px; padding: 16px 12px; text-align: center; }
+  .sun-half:last-child { border-color: var(--lavender); }
+  .sun-icon { font-size: 30px; display: block; margin-bottom: 6px; }
+  .sun-time { font-family: 'Zen Maru Gothic', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); }
+  .sun-lbl  { font-size: 10px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.13em; margin-top: 4px; }
+  .sun-bar-wrap { position: relative; height: 7px; background: var(--pink-lt); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .sun-bar { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--yellow), var(--peach)); border-radius: 10px; }
+  .sun-bar-dot { position: absolute; top: 50%; width: 13px; height: 13px; background: var(--yellow); border: 2.5px solid white; border-radius: 50%; transform: translateY(-50%) translateX(-50%); box-shadow: 0 0 8px rgba(253,230,138,0.9); }
+  .sun-daylight { font-size: 12px; font-weight: 700; color: var(--text-soft); text-align: center; }
+
+  /* ── Hourly ── */
+  .hourly-scroll { display: flex; gap: 9px; overflow-x: auto; padding-bottom: 6px; flex: 1; scrollbar-width: thin; scrollbar-color: var(--pink-lt) transparent; }
+  .hourly-scroll::-webkit-scrollbar { height: 4px; }
+  .hourly-scroll::-webkit-scrollbar-thumb { background: var(--pink-lt); border-radius: 4px; }
+  .hour-tile { background: var(--pink-bg); border: 2px solid var(--pink-lt); border-radius: 14px; padding: 11px 9px; text-align: center; min-width: 60px; flex-shrink: 0; transition: border-color 0.2s, transform 0.2s; }
+  .hour-tile:hover { border-color: var(--pink); transform: translateY(-3px); }
+  .hour-tile.now-tile { border-color: var(--pink); background: #fff0f5; }
+  .hour-time { font-size: 10px; font-weight: 800; color: var(--text-soft); }
+  .hour-icon { font-size: 22px; margin: 4px 0; display: block; }
+  .hour-temp { font-size: 14px; font-weight: 900; color: var(--text); }
+  .hour-precip { font-size: 9px; font-weight: 700; color: var(--sky); margin-top: 2px; min-height: 13px; }
+
+  /* ── Daily ── */
+  .daily-list { display: flex; flex-direction: column; gap: 7px; flex: 1; }
+  .daily-row { display: flex; align-items: center; gap: 9px; background: var(--pink-bg); border: 1.5px solid var(--pink-lt); border-radius: 14px; padding: 9px 12px; transition: border-color 0.2s, transform 0.15s; }
+  .daily-row:hover { border-color: var(--pink); transform: translateX(3px); }
+  .daily-day { font-size: 12px; font-weight: 800; color: var(--text-soft); width: 50px; flex-shrink: 0; }
+  .daily-icon { font-size: 20px; flex-shrink: 0; }
+  .daily-bar-wrap { flex: 1; position: relative; height: 6px; border-radius: 10px; background: var(--pink-lt); overflow: hidden; }
+  .daily-bar { position: absolute; height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--sky), var(--pink)); }
+  .daily-temps { display: flex; gap: 9px; flex-shrink: 0; }
+  .daily-max { font-size: 13px; font-weight: 900; color: var(--text); }
+  .daily-min { font-size: 13px; font-weight: 700; color: var(--text-soft); }
+  .daily-precip { font-size: 10px; font-weight: 700; color: var(--sky); width: 36px; text-align: right; flex-shrink: 0; }
+
+  /* Loading */
+  .loading { text-align: center; font-size: 16px; font-weight: 700; color: var(--text-soft); padding: 16px 0; animation: bounce 1s ease-in-out infinite alternate; flex: 1; display: flex; align-items: center; justify-content: center; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-7px)} }
+
+  /* Footer */
+  .footer { margin-top: 14px; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 580px; position: relative; z-index: 10; }
+  .footer-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-soft); display: flex; align-items: center; gap: 5px; }
+  .heart { display: inline-block; color: var(--pink); animation: heartbeat 1.4s ease-in-out infinite; }
+  @keyframes heartbeat { 0%,100%{transform:scale(1)} 14%{transform:scale(1.35)} 28%{transform:scale(1)} 42%{transform:scale(1.2)} }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="carousel-outer" id="carousel-outer">
+  <!-- Progress bar -->
+  <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+  <!-- Label -->
+  <div class="slide-label" id="slide-label"></div>
+  <!-- Nav arrows -->
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="goSlide(-1)">‹</button>
+    <button class="nav-btn" onclick="goSlide(1)">›</button>
+  </div>
+  <!-- Pause badge -->
+  <div class="pause-badge">⏸ pauset</div>
+
+  <div class="slides-viewport">
+    <div class="slides-track" id="slides-track">
+
+      <!-- 0: Hero -->
+      <div class="slide">
+        <div class="card" data-label="🗺️ Vålerenga, Oslo">
+          <div id="hero-inner"><div class="loading">✨ Laster vær… ✨</div></div>
+        </div>
+      </div>
+
+      <!-- 1: Calendar -->
+      <div class="slide">
+        <div class="card" data-label="📅 Kalender">
+          <div class="card-title">📅 Kalender</div>
+          <div class="cal-header">
+            <div class="cal-month-name" id="cal-month-name">…</div>
+            <div class="cal-nav">
+              <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+              <button class="cal-btn" onclick="changeMonth(1)">›</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+
+      <!-- 2: Details -->
+      <div class="slide">
+        <div class="card" data-label="🌡️ Detaljer">
+          <div class="card-title">🌡️ Detaljer</div>
+          <div class="detail-grid" id="detail-grid">
+            <div class="loading" style="grid-column:1/-1">✨ Laster… ✨</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3: Sun -->
+      <div class="slide">
+        <div class="card" data-label="☀️ Sol i dag">
+          <div class="card-title">☀️ Sol i dag</div>
+          <div id="sun-content"><div class="loading">✨ Laster… ✨</div></div>
+        </div>
+      </div>
+
+      <!-- 4: Hourly -->
+      <div class="slide">
+        <div class="card" data-label="🕐 Timesvarsel">
+          <div class="card-title">🕐 Timesvarsel (24t)</div>
+          <div class="hourly-scroll" id="hourly-scroll">
+            <div class="loading">✨ Laster… ✨</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5: Daily -->
+      <div class="slide">
+        <div class="card" data-label="📆 7-dagers varsel">
+          <div class="card-title">📆 7-dagers varsel</div>
+          <div class="daily-list" id="daily-list">
+            <div class="loading">✨ Laster… ✨</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-label"><span class="heart">♥</span> Vålerenga, Oslo · live</div>
+  <div class="footer-label" id="last-updated"></div>
+</footer>
+
+<script>
+  const LAT = 59.9127, LON = 10.7745;
+  const SLIDE_DURATION = 5000;
+
+  // ── Sparkles ──
+  const starChars = ['✦','✧','⋆','·','✩','★','♡','✿','◌','❋'];
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.textContent = starChars[Math.floor(Math.random() * starChars.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.fontSize = (11 + Math.random() * 16) + 'px';
+    s.style.color = ['#ff8fab','#c8b6e2','#b5ead7','#fde68a','#bde0fe'][Math.floor(Math.random()*5)];
+    s.style.animationDuration = (14 + Math.random() * 20) + 's';
+    s.style.animationDelay = (-Math.random() * 28) + 's';
+    starsEl.appendChild(s);
+  }
+
+  // ── CAROUSEL ──────────────────────────────────────────────────
+  const track = document.getElementById('slides-track');
+  const slideEls = Array.from(document.querySelectorAll('.slide'));
+  const cards = slideEls.map(s => s.querySelector('.card'));
+  const total = slideEls.length;
+  let current = 0;
+  let paused = false;
+  let autoTimer = null;
+  let progressStart = null;
+  let progressRemaining = SLIDE_DURATION;
+
+  const progressBar = document.getElementById('progress-bar');
+  const slideLabel  = document.getElementById('slide-label');
+  const dotsEl      = document.getElementById('dots');
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => jumpTo(i));
+    dotsEl.appendChild(d);
+  }
+
+  function getDots() { return Array.from(dotsEl.querySelectorAll('.dot')); }
+
+  function setSlide(idx) {
+    current = ((idx % total) + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    getDots().forEach((d, i) => d.classList.toggle('active', i === current));
+    slideLabel.textContent = cards[current].dataset.label || '';
+  }
+
+  function jumpTo(idx) {
+    setSlide(idx);
+    resetProgress(SLIDE_DURATION);
+  }
+
+  function goSlide(delta) {
+    setSlide(current + delta);
+    resetProgress(SLIDE_DURATION);
+  }
+
+  // Progress bar
+  function resetProgress(duration) {
+    clearTimeout(autoTimer);
+    progressBar.style.transition = 'none';
+    progressBar.style.width = '0%';
+    progressBar.offsetHeight; // reflow
+    progressRemaining = duration;
+    if (!paused) startProgress(duration);
+  }
+
+  function startProgress(duration) {
+    progressBar.style.transition = `width ${duration}ms linear`;
+    progressBar.style.width = '100%';
+    progressStart = performance.now();
+    autoTimer = setTimeout(() => {
+      setSlide(current + 1);
+      resetProgress(SLIDE_DURATION);
+    }, duration);
+  }
+
+  // Pause on hover
+  const outer = document.getElementById('carousel-outer');
+  outer.addEventListener('mouseenter', () => {
+    if (paused) return;
+    paused = true;
+    clearTimeout(autoTimer);
+    const elapsed = performance.now() - progressStart;
+    progressRemaining = Math.max(0, progressRemaining - elapsed);
+    // freeze bar
+    const w = getComputedStyle(progressBar).width;
+    const pw = getComputedStyle(progressBar.parentElement).width;
+    const pct = (parseFloat(w) / parseFloat(pw) * 100).toFixed(2);
+    progressBar.style.transition = 'none';
+    progressBar.style.width = pct + '%';
+  });
+
+  outer.addEventListener('mouseleave', () => {
+    if (!paused) return;
+    paused = false;
+    startProgress(progressRemaining);
+  });
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') goSlide(1);
+    if (e.key === 'ArrowLeft')  goSlide(-1);
+  });
+
+  // Init
+  setSlide(0);
+  resetProgress(SLIDE_DURATION);
+
+  // ── CALENDAR ──────────────────────────────────────────────────
+  const MONTHS_NO_FULL = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+  const MONTHS_NO_SHORT = ['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+  const WEEKDAYS_NO = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
+  let calViewDate = new Date();
+
+  function renderCalendar() {
+    const today = new Date();
+    const year = calViewDate.getFullYear(), month = calViewDate.getMonth();
+    document.getElementById('cal-month-name').textContent = `${MONTHS_NO_FULL[month]} ${year}`;
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    ['Man','Tir','Ons','Tor','Fre','Lør','Søn'].forEach((d,i) => {
+      const el = document.createElement('div');
+      el.className = 'cal-dow';
+      if (i >= 5) el.style.color = 'var(--pink)';
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+    let startDow = (new Date(year, month, 1).getDay() + 6) % 7;
+    const dim = new Date(year, month+1, 0).getDate();
+    const prevDays = new Date(year, month, 0).getDate();
+    for (let i = 0; i < startDow; i++) {
+      const el = document.createElement('div');
+      el.className = 'cal-day other-month';
+      el.textContent = prevDays - startDow + 1 + i;
+      grid.appendChild(el);
+    }
+    for (let d = 1; d <= dim; d++) {
+      const el = document.createElement('div');
+      const dow = new Date(year, month, d).getDay();
+      el.className = 'cal-day' + (dow===0||dow===6?' sunday':'');
+      el.textContent = d;
+      if (d===today.getDate() && month===today.getMonth() && year===today.getFullYear())
+        el.classList.add('today');
+      grid.appendChild(el);
+    }
+    const rem = (startDow+dim)%7===0 ? 0 : 7-((startDow+dim)%7);
+    for (let d = 1; d <= rem; d++) {
+      const el = document.createElement('div');
+      el.className = 'cal-day other-month';
+      el.textContent = d;
+      grid.appendChild(el);
+    }
+  }
+  function changeMonth(delta) {
+    calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth()+delta, 1);
+    renderCalendar();
+  }
+  renderCalendar();
+
+  // ── WEATHER HELPERS ───────────────────────────────────────────
+  function weatherInfo(code, isDay) {
+    const m = {
+      0:{icon:isDay?'☀️':'🌙',label:'Klarvær'}, 1:{icon:isDay?'🌤️':'🌙',label:'Mest klart'},
+      2:{icon:'⛅',label:'Delvis skyet'}, 3:{icon:'☁️',label:'Overskyet'},
+      45:{icon:'🌫️',label:'Tåke'}, 48:{icon:'🌫️',label:'Rimtåke'},
+      51:{icon:'🌦️',label:'Lett yr'}, 53:{icon:'🌦️',label:'Yr'}, 55:{icon:'🌧️',label:'Kraftig yr'},
+      61:{icon:'🌧️',label:'Lett regn'}, 63:{icon:'🌧️',label:'Regn'}, 65:{icon:'🌧️',label:'Kraftig regn'},
+      71:{icon:'🌨️',label:'Lett snø'}, 73:{icon:'❄️',label:'Snø'}, 75:{icon:'❄️',label:'Kraftig snø'},
+      77:{icon:'🌨️',label:'Snøkorn'}, 80:{icon:'🌦️',label:'Regnbyger'},
+      81:{icon:'🌧️',label:'Kraftige byger'}, 82:{icon:'⛈️',label:'Voldsomme byger'},
+      85:{icon:'🌨️',label:'Snøbyger'}, 86:{icon:'🌨️',label:'Kraftige snøbyger'},
+      95:{icon:'⛈️',label:'Tordenvær'}, 96:{icon:'⛈️',label:'Torden og hagl'}, 99:{icon:'⛈️',label:'Kraftig torden'},
+    };
+    return m[code]||{icon:'🌡️',label:'Ukjent'};
+  }
+  function windDir(deg){return['N','NØ','Ø','SØ','S','SV','V','NV'][Math.round(deg/45)%8];}
+  function fmt2(n){return String(n).padStart(2,'0');}
+  function fmtTime(iso){const d=new Date(iso);return`${fmt2(d.getHours())}:${fmt2(d.getMinutes())}`;}
+  function uvLabel(uv){if(uv<=2)return'Lav';if(uv<=5)return'Moderat';if(uv<=7)return'Høy';if(uv<=10)return'Svært høy';return'Ekstremt';}
+  function beaufort(ms){const sc=[0.3,1.6,3.4,5.5,8,10.8,13.9,17.2,20.8,24.5,28.5,32.7];let b=0;sc.forEach((v,i)=>{if(ms>=v)b=i+1;});return b;}
+
+  // ── LOAD WEATHER ──────────────────────────────────────────────
+  async function loadWeather() {
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
+        `&current=temperature_2m,apparent_temperature,weathercode,windspeed_10m,winddirection_10m,` +
+        `relativehumidity_2m,is_day,precipitation,surface_pressure,visibility,uv_index,cloudcover` +
+        `&hourly=temperature_2m,weathercode,precipitation_probability,windspeed_10m,is_day` +
+        `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset` +
+        `&wind_speed_unit=ms&timezone=Europe%2FOslo&forecast_days=7`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+      const c = data.current, h = data.hourly, d = data.daily;
+      const now = new Date();
+
+      const info = weatherInfo(c.weathercode, c.is_day);
+      const temp     = Math.round(c.temperature_2m);
+      const feels    = Math.round(c.apparent_temperature);
+      const wind     = c.windspeed_10m.toFixed(1);
+      const dir      = windDir(c.winddirection_10m);
+      const hum      = c.relativehumidity_2m;
+      const precip   = c.precipitation;
+      const pressure = Math.round(c.surface_pressure);
+      const vis      = c.visibility!=null?(c.visibility/1000).toFixed(1):'–';
+      const uv       = c.uv_index!=null?Math.round(c.uv_index):'–';
+      const cloud    = c.cloudcover!=null?c.cloudcover:'–';
+      const bf       = beaufort(c.windspeed_10m);
+
+      // Hero
+      document.getElementById('hero-inner').innerHTML = `
+        <div class="hero-wrap">
+          <div class="hero-top">
+            <div class="weather-icon">${info.icon}</div>
+            <div>
+              <div class="location-tag">🗺️ Vålerenga, Oslo</div>
+              <div class="temp">${temp}<sup>°C</sup></div>
+              <div class="condition">${info.label}</div>
+              <div class="feels-like">Føles som ${feels}°C &nbsp;·&nbsp; ${WEEKDAYS_NO[now.getDay()]} ${now.getDate()}. ${MONTHS_NO_SHORT[now.getMonth()]}</div>
+            </div>
+          </div>
+          <div class="hero-pills">
+            <div class="hero-pill">💨 ${wind} m/s ${dir}</div>
+            <div class="hero-pill">💧 ${hum}%</div>
+            <div class="hero-pill">🌧️ ${precip} mm</div>
+            <div class="hero-pill">🌬️ Bf ${bf}</div>
+          </div>
+        </div>`;
+
+      // Details
+      document.getElementById('detail-grid').innerHTML = `
+        <div class="d-tile"><span class="d-icon">🌡️</span><span class="d-val">${pressure} hPa</span><span class="d-lbl">Lufttrykk</span></div>
+        <div class="d-tile"><span class="d-icon">👁️</span><span class="d-val">${vis} km</span><span class="d-lbl">Sikt</span></div>
+        <div class="d-tile"><span class="d-icon">🔆</span><span class="d-val">${uv}</span><span class="d-lbl">UV · ${uv!=='–'?uvLabel(uv):'–'}</span></div>
+        <div class="d-tile"><span class="d-icon">☁️</span><span class="d-val">${cloud}%</span><span class="d-lbl">Skydekke</span></div>
+        <div class="d-tile"><span class="d-icon">💨</span><span class="d-val">${wind} m/s</span><span class="d-lbl">Vindstyrke</span></div>
+        <div class="d-tile"><span class="d-icon">💧</span><span class="d-val">${hum}%</span><span class="d-lbl">Fuktighet</span></div>`;
+
+      // Sun
+      const srMs = new Date(d.sunrise[0]).getTime(), ssMs = new Date(d.sunset[0]).getTime();
+      const totalMs = ssMs - srMs;
+      const pct = totalMs > 0 ? (Math.max(0,Math.min(Date.now()-srMs,totalMs))/totalMs*100).toFixed(1) : 0;
+      const dlMin = Math.round(totalMs/60000);
+      document.getElementById('sun-content').innerHTML = `
+        <div class="sun-row">
+          <div class="sun-half"><span class="sun-icon">🌅</span><div class="sun-time">${fmtTime(d.sunrise[0])}</div><div class="sun-lbl">Soloppgang</div></div>
+          <div class="sun-half"><span class="sun-icon">🌇</span><div class="sun-time">${fmtTime(d.sunset[0])}</div><div class="sun-lbl">Solnedgang</div></div>
+        </div>
+        <div class="sun-bar-wrap">
+          <div class="sun-bar" style="width:${pct}%"></div>
+          <div class="sun-bar-dot" style="left:${pct}%"></div>
+        </div>
+        <div class="sun-daylight">☀️ ${Math.floor(dlMin/60)}t ${dlMin%60}m dagslys</div>`;
+
+      // Hourly
+      const nowIso = new Date().toISOString().slice(0,13);
+      let si = h.time.findIndex(t=>t.slice(0,13)>=nowIso);
+      if(si<0)si=0;
+      document.getElementById('hourly-scroll').innerHTML =
+        h.time.slice(si,si+24).map((t,i)=>{
+          const idx=si+i;
+          const hi=weatherInfo(h.weathercode[idx],h.is_day[idx]);
+          const pp=h.precipitation_probability[idx];
+          return `<div class="hour-tile${i===0?' now-tile':''}">
+            <div class="hour-time">${i===0?'Nå':fmt2(new Date(t).getHours())+':00'}</div>
+            <span class="hour-icon">${hi.icon}</span>
+            <div class="hour-temp">${Math.round(h.temperature_2m[idx])}°</div>
+            <div class="hour-precip">${pp>0?'💧'+pp+'%':''}</div>
+          </div>`;
+        }).join('');
+
+      // Daily
+      const allT=d.temperature_2m_max.concat(d.temperature_2m_min);
+      const gMax=Math.max(...allT), gMin=Math.min(...allT), tR=gMax-gMin||1;
+      const dNames=['Søn','Man','Tir','Ons','Tor','Fre','Lør'];
+      document.getElementById('daily-list').innerHTML =
+        d.time.map((date,i)=>{
+          const dObj=new Date(date+'T12:00:00');
+          const nm=i===0?'I dag':i===1?'I morgen':dNames[dObj.getDay()];
+          const mx=Math.round(d.temperature_2m_max[i]), mn=Math.round(d.temperature_2m_min[i]);
+          const di=weatherInfo(d.weathercode[i],1);
+          const dp=d.precipitation_sum[i]!=null?d.precipitation_sum[i].toFixed(1):'0';
+          return `<div class="daily-row">
+            <span class="daily-day">${nm}</span>
+            <span class="daily-icon">${di.icon}</span>
+            <div class="daily-bar-wrap"><div class="daily-bar" style="left:${((mn-gMin)/tR*100).toFixed(1)}%;width:${((mx-mn)/tR*100).toFixed(1)}%"></div></div>
+            <div class="daily-temps"><span class="daily-max">${mx}°</span><span class="daily-min">${mn}°</span></div>
+            <span class="daily-precip">${dp>0?'💧'+dp+'mm':''}</span>
+          </div>`;
+        }).join('');
+
+      document.getElementById('last-updated').textContent =
+        '✨ ' + now.toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+    } catch(e) {
+      console.error(e);
+      document.getElementById('hero-inner').innerHTML = `<div class="loading">😿 Kunne ikke laste vær!</div>`;
+    }
+  }
+
+  loadWeather();
+  setInterval(loadWeather, 15000);
+</script>
+</body>
+</html>
