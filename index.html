@@ -2,323 +2,387 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌸 Vålerenga Vær 🌸</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🌸 Vålerenga Vær</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --pink:      #ff8fab;
-    --pink-lt:   #ffc8dd;
-    --pink-bg:   #fff0f5;
-    --lavender:  #c8b6e2;
-    --mint:      #b5ead7;
-    --peach:     #ffcba4;
-    --yellow:    #fde68a;
-    --sky:       #bde0fe;
-    --white:     #ffffff;
-    --text:      #5c3d5e;
-    --text-soft: #b49bbf;
-    --shadow:    rgba(255, 143, 171, 0.22);
+    --pink:     #ff8fab;
+    --pink-lt:  #ffc8dd;
+    --pink-bg:  #fff0f5;
+    --lav:      #c8b6e2;
+    --mint:     #b5ead7;
+    --peach:    #ffcba4;
+    --yellow:   #fde68a;
+    --sky:      #bde0fe;
+    --white:    #ffffff;
+    --text:     #4a2d50;
+    --soft:     #b49bbf;
+    --shadow:   rgba(255,143,171,0.18);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #f0dcea;
     font-family: 'Nunito', sans-serif;
-    background: var(--pink-bg);
     color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 20px 28px;
-    overflow: hidden;
-    position: relative;
   }
 
-  body::before {
-    content: '';
-    position: fixed; top: 0; left: 0; right: 0; height: 8px;
+  /* ── Full-screen 9:16 shell ── */
+  .screen {
+    position: fixed;
+    inset: 0;
+    background: var(--pink-bg);
+    display: grid;
+    /* rows: rainbow | header | label+progress | carousel | dots+nav */
+    grid-template-rows: 0.8vh 11vh 5vh 1fr 9vh;
+    overflow: hidden;
+  }
+
+  /* ── Rainbow stripe ── */
+  .rainbow {
     background: repeating-linear-gradient(90deg,
-      var(--pink) 0px, var(--pink) 20px,
-      var(--lavender) 20px, var(--lavender) 40px,
-      var(--mint) 40px, var(--mint) 60px,
-      var(--peach) 60px, var(--peach) 80px,
-      var(--yellow) 80px, var(--yellow) 100px,
-      var(--sky) 100px, var(--sky) 120px);
-    z-index: 200;
+      var(--pink)   0%,    var(--pink)   14.3%,
+      var(--lav)    14.3%, var(--lav)    28.6%,
+      var(--mint)   28.6%, var(--mint)   42.9%,
+      var(--peach)  42.9%, var(--peach)  57.1%,
+      var(--yellow) 57.1%, var(--yellow) 71.4%,
+      var(--sky)    71.4%, var(--sky)    85.7%,
+      var(--pink-lt)85.7%, var(--pink-lt)100%);
   }
 
-  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .star { position: absolute; animation: floatStar linear infinite; opacity: 0.3; }
+  /* ── Stars (decorative, clipped to screen) ── */
+  .stars { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .star  { position: absolute; animation: floatStar linear infinite; opacity: 0; }
   @keyframes floatStar {
-    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.3; }
-    90%  { opacity: 0.3; }
-    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    0%   { transform: translateY(102vh) rotate(0deg);  opacity: 0; }
+    8%   { opacity: 0.22; }
+    92%  { opacity: 0.22; }
+    100% { transform: translateY(-5vh)  rotate(360deg); opacity: 0; }
   }
 
-  /* ── Carousel ── */
-  .carousel-outer {
-    position: relative;
-    width: 100%;
-    max-width: 580px;
-    z-index: 10;
-  }
-
-  .progress-wrap {
-    width: 100%; height: 4px;
-    background: var(--pink-lt); border-radius: 4px;
-    margin-bottom: 14px; overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--pink), var(--lavender));
-    border-radius: 4px;
-    width: 0%;
-  }
-
-  .slide-label {
-    text-align: center;
-    font-size: 11px; font-weight: 800;
-    letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--text-soft);
-    margin-bottom: 10px;
-    min-height: 16px;
-  }
-
-  .nav-arrows {
-    display: flex; justify-content: space-between;
-    position: absolute; top: 50%; left: -50px; right: -50px;
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-  .nav-btn {
-    pointer-events: all;
-    background: var(--white); border: 2.5px solid var(--pink-lt);
-    border-radius: 50%; width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 18px; color: var(--pink); font-weight: 900;
-    box-shadow: 0 3px 14px var(--shadow);
-    transition: background 0.2s, transform 0.2s;
-  }
-  .nav-btn:hover { background: var(--pink-lt); transform: scale(1.12); }
-
-  /* Slides viewport */
-  .slides-viewport {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .slides-track {
+  /* ── HEADER ── */
+  .header {
     display: flex;
-    transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4vw;
+    background: rgba(255,240,245,0.92);
+    backdrop-filter: blur(8px);
+    position: relative; z-index: 5;
+  }
+  .h-loc  { font-size: 1.8vh; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase; color: var(--soft); }
+  .h-name { font-family: 'Zen Maru Gothic', sans-serif; font-size: 3.8vh; font-weight: 900; color: var(--pink); line-height: 1; }
+  .h-right{ text-align: right; }
+  .h-date { font-size: 1.7vh; font-weight: 800; color: var(--soft); }
+  .h-day  { font-family: 'Zen Maru Gothic', sans-serif; font-size: 2.8vh; font-weight: 700; color: var(--text); }
+
+  /* ── LABEL + PROGRESS ── */
+  .top-bar {
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 0 4vw;
+    gap: 0.6vh;
+    position: relative; z-index: 5;
+  }
+  .label-row {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slide-label  { font-size: 1.5vh; font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase; color: var(--soft); }
+  .slide-count  { font-size: 1.4vh; font-weight: 800; color: var(--pink-lt); }
+  .prog-wrap {
+    height: 0.6vh; background: var(--pink-lt); border-radius: 1vh; overflow: hidden;
+  }
+  .prog-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--pink), var(--lav), var(--pink));
+    background-size: 200% 100%;
+    border-radius: 1vh;
+    animation: shimmer 2s linear infinite;
+  }
+  @keyframes shimmer { 0%{background-position:0%}100%{background-position:200%} }
+
+  /* ── CAROUSEL ── */
+  .carousel {
+    overflow: hidden;
+    padding: 0 3vw;
+    position: relative; z-index: 5;
+  }
+  .track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.52s cubic-bezier(0.4,0,0.2,1);
     will-change: transform;
   }
-
   .slide {
-    min-width: 100%;
+    min-width: 100%; height: 100%;
     flex-shrink: 0;
+    display: flex; flex-direction: column;
   }
 
-  /* ── Card ── */
+  /* ── CARD ── */
   .card {
+    flex: 1;
     background: var(--white);
-    border: 2.5px solid var(--pink-lt);
-    border-radius: 30px;
-    box-shadow: 0 8px 40px var(--shadow);
-    padding: 30px 30px 26px;
-    min-height: 360px;
-    display: flex;
-    flex-direction: column;
+    border: 0.5vw solid var(--pink-lt);
+    border-radius: 4vw;
+    box-shadow: 0 1vh 4vh var(--shadow);
+    padding: 2.5vh 4vw 2vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    position: relative;
   }
+  .card::before, .card::after {
+    content: '🌸'; position: absolute;
+    font-size: 2vh; opacity: 0.25;
+  }
+  .card::before { top: 1.2vh; left: 2vw; }
+  .card::after  { top: 1.2vh; right: 2vw; }
 
   .card-title {
-    font-size: 11px; font-weight: 800;
-    letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--text-soft); margin-bottom: 20px;
-    display: flex; align-items: center; gap: 7px;
+    font-size: 1.5vh; font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--soft); margin-bottom: 1.8vh;
+    text-align: center;
   }
 
-  /* Dots */
-  .dots {
-    display: flex; justify-content: center; gap: 8px;
-    margin-top: 16px;
-  }
-  .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--pink-lt); cursor: pointer;
-    transition: background 0.3s, width 0.3s, border-radius 0.3s;
-    border: none; padding: 0;
-  }
-  .dot.active { background: var(--pink); width: 24px; border-radius: 4px; }
-  .dot:hover { background: var(--pink); }
-
-  /* Pause indicator */
-  .pause-badge {
-    position: absolute; top: 50px; right: 0;
-    background: var(--pink-lt); border-radius: 12px;
-    padding: 3px 9px; font-size: 10px; font-weight: 800;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--pink); opacity: 0; transition: opacity 0.3s;
-    pointer-events: none;
-  }
-  .carousel-outer:hover .pause-badge { opacity: 1; }
-
-  /* ── Hero ── */
-  .hero-wrap {
+  /* ── BOTTOM BAR: dots + nav ── */
+  .bottom-bar {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    flex: 1; gap: 20px;
+    gap: 1vh;
+    position: relative; z-index: 5;
+    padding-bottom: 0.5vh;
   }
-  .hero-top { display: flex; align-items: center; gap: 22px; }
-  .weather-icon {
-    font-size: 88px; line-height: 1;
-    animation: float 3s ease-in-out infinite;
-    filter: drop-shadow(0 6px 14px rgba(255,143,171,0.35));
+  .dots { display: flex; gap: 1.5vw; }
+  .dot {
+    width: 2vw; height: 2vw; border-radius: 50%;
+    background: var(--pink-lt); border: none; cursor: pointer;
+    transition: background 0.3s, width 0.3s, border-radius 0.3s;
+    padding: 0;
   }
-  @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
-  .temp {
+  .dot.active { background: var(--pink); width: 6vw; border-radius: 1vw; }
+  .dot:hover  { background: var(--pink); }
+  .navs { display: flex; gap: 4vw; }
+  .nav-btn {
+    background: var(--white); border: 0.5vw solid var(--pink-lt);
+    border-radius: 50%; width: 6vh; height: 6vh;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 2.8vh; color: var(--pink); font-weight: 900;
+    box-shadow: 0 0.5vh 2vh var(--shadow);
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-btn:hover { background: var(--pink-lt); transform: scale(1.1); }
+
+  /* ══════════════════════════════════════════
+     SLIDE CONTENT — all fluid vh/vw units
+  ══════════════════════════════════════════ */
+
+  /* ── Hero ── */
+  .hero-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0;
+  }
+  .hero-icon {
+    font-size: 16vh; line-height: 1;
+    margin-bottom: 0.5vh;
+    animation: bob 3.5s ease-in-out infinite;
+    filter: drop-shadow(0 1vh 3vh rgba(255,143,171,0.45));
+  }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-1.5vh) rotate(3deg)} }
+  .hero-temp-row { display: flex; align-items: flex-start; gap: 0; margin-bottom: 0.4vh; }
+  .hero-temp {
     font-family: 'Zen Maru Gothic', sans-serif;
-    font-size: 80px; font-weight: 700; color: var(--text);
-    line-height: 1; text-shadow: 3px 3px 0 var(--pink-lt);
+    font-size: 14vh; font-weight: 900; color: var(--text); line-height: 0.9;
+    text-shadow: 0.5vw 0.5vw 0 var(--pink-lt);
   }
-  .temp sup { font-size: 32px; vertical-align: super; color: var(--pink); }
-  .condition { font-size: 21px; font-weight: 800; color: var(--pink); margin-top: 4px; }
-  .feels-like { font-size: 12px; font-weight: 700; color: var(--text-soft); margin-top: 3px; }
-  .location-tag { font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 5px; }
-  .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-  .hero-pill {
-    background: var(--pink-bg); border: 2px solid var(--pink-lt);
-    border-radius: 20px; padding: 6px 13px;
-    font-size: 13px; font-weight: 800; color: var(--text);
-    display: flex; align-items: center; gap: 5px;
+  .hero-deg  { font-family: 'Zen Maru Gothic', sans-serif; font-size: 5vh; font-weight: 700; color: var(--pink); margin-top: 2vh; }
+  .hero-cond { font-size: 3.2vh; font-weight: 900; color: var(--pink); text-align: center; margin-bottom: 0.6vh; }
+  .hero-feel { font-size: 1.9vh; font-weight: 700; color: var(--soft); margin-bottom: 2.5vh; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 1.2vw; justify-content: center; }
+  .hero-pill  {
+    background: var(--pink-bg); border: 0.4vw solid var(--pink-lt);
+    border-radius: 5vw; padding: 1.2vh 3vw;
+    font-size: 1.8vh; font-weight: 800; color: var(--text);
+    display: flex; align-items: center; gap: 1vw;
   }
 
   /* ── Calendar ── */
-  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .cal-month-name { font-family: 'Zen Maru Gothic', sans-serif; font-size: 21px; font-weight: 700; color: var(--pink); }
-  .cal-nav { display: flex; gap: 7px; }
-  .cal-btn {
-    background: var(--pink-bg); border: 2px solid var(--pink-lt);
-    border-radius: 9px; width: 28px; height: 28px;
-    cursor: pointer; font-size: 14px; color: var(--pink); font-weight: 900;
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5vh; }
+  .cal-mname { font-family: 'Zen Maru Gothic', sans-serif; font-size: 3.2vh; font-weight: 700; color: var(--pink); }
+  .cal-navs  { display: flex; gap: 2vw; }
+  .cal-btn   {
+    background: var(--pink-bg); border: 0.4vw solid var(--pink-lt);
+    border-radius: 1.5vw; width: 5vw; height: 5vw; max-width: 32px; max-height: 32px;
+    cursor: pointer; font-size: 2.2vh; color: var(--pink); font-weight: 900;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, transform 0.15s;
+    transition: background 0.2s;
   }
-  .cal-btn:hover { background: var(--pink-lt); transform: scale(1.1); }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; flex: 1; }
-  .cal-dow { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-soft); text-align: center; padding-bottom: 4px; }
-  .cal-day {
+  .cal-btn:hover { background: var(--pink-lt); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.5vh; flex: 1; align-content: start; }
+  .cal-dow  { font-size: 1.3vh; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); text-align: center; padding-bottom: 0.8vh; }
+  .cal-day  {
     aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-    border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text);
-    cursor: default; position: relative;
+    border-radius: 1vw; font-size: 1.8vh; font-weight: 700; color: var(--text);
   }
-  .cal-day.other-month { color: var(--text-soft); opacity: 0.35; }
-  .cal-day.sunday { color: #e05d7a; }
-  .cal-day.today {
+  .cal-day.other  { color: var(--soft); opacity: 0.3; }
+  .cal-day.wkend  { color: #e05d7a; }
+  .cal-day.today  {
     background: var(--pink); color: white; font-weight: 900;
-    box-shadow: 0 3px 10px rgba(255,143,171,0.5);
-    animation: pulseToday 2s ease-in-out infinite;
+    box-shadow: 0 0.4vh 1.2vh rgba(255,143,171,0.55);
+    animation: pulse 2s ease-in-out infinite;
   }
-  @keyframes pulseToday {
-    0%,100%{box-shadow:0 3px 10px rgba(255,143,171,0.5)}
-    50%{box-shadow:0 3px 18px rgba(255,143,171,0.8)}
-  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0.4vh 1.2vh rgba(255,143,171,0.55)} 50%{box-shadow:0 0.4vh 2.5vh rgba(255,143,171,0.85)} }
 
   /* ── Details ── */
-  .detail-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; flex: 1; align-content: start; }
-  .d-tile { background: var(--pink-bg); border: 2px solid var(--pink-lt); border-radius: 16px; padding: 14px 8px; text-align: center; }
-  .d-tile:nth-child(1){border-color:var(--lavender)} .d-tile:nth-child(2){border-color:var(--mint)}
-  .d-tile:nth-child(3){border-color:var(--peach)}    .d-tile:nth-child(4){border-color:var(--yellow)}
-  .d-tile:nth-child(5){border-color:var(--sky)}      .d-tile:nth-child(6){border-color:var(--pink-lt)}
-  .d-icon { font-size: 24px; margin-bottom: 5px; display: block; }
-  .d-val  { font-size: 18px; font-weight: 900; color: var(--text); display: block; }
-  .d-lbl  { font-size: 10px; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase; color: var(--text-soft); margin-top: 2px; display: block; }
+  .det-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.4vh; flex: 1; align-content: start;
+  }
+  .d-tile {
+    background: var(--pink-bg); border: 0.4vw solid var(--pink-lt);
+    border-radius: 3vw; padding: 2vh 2vw; text-align: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .d-tile:nth-child(1){border-color:var(--lav);    background:#f3eeff}
+  .d-tile:nth-child(2){border-color:var(--mint);   background:#eefff8}
+  .d-tile:nth-child(3){border-color:var(--peach);  background:#fff5ee}
+  .d-tile:nth-child(4){border-color:var(--yellow); background:#fffbe8}
+  .d-tile:nth-child(5){border-color:var(--sky);    background:#eef6ff}
+  .d-tile:nth-child(6){border-color:var(--pink-lt);background:var(--pink-bg)}
+  .d-icon { font-size: 3.8vh; margin-bottom: 0.6vh; }
+  .d-val  { font-family: 'Zen Maru Gothic', sans-serif; font-size: 3.2vh; font-weight: 700; color: var(--text); }
+  .d-lbl  { font-size: 1.2vh; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); margin-top: 0.3vh; }
 
   /* ── Sun ── */
-  .sun-row { display: flex; gap: 12px; margin-bottom: 18px; }
-  .sun-half { flex: 1; background: var(--pink-bg); border: 2px solid var(--yellow); border-radius: 16px; padding: 16px 12px; text-align: center; }
-  .sun-half:last-child { border-color: var(--lavender); }
-  .sun-icon { font-size: 30px; display: block; margin-bottom: 6px; }
-  .sun-time { font-family: 'Zen Maru Gothic', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); }
-  .sun-lbl  { font-size: 10px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.13em; margin-top: 4px; }
-  .sun-bar-wrap { position: relative; height: 7px; background: var(--pink-lt); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
-  .sun-bar { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--yellow), var(--peach)); border-radius: 10px; }
-  .sun-bar-dot { position: absolute; top: 50%; width: 13px; height: 13px; background: var(--yellow); border: 2.5px solid white; border-radius: 50%; transform: translateY(-50%) translateX(-50%); box-shadow: 0 0 8px rgba(253,230,138,0.9); }
-  .sun-daylight { font-size: 12px; font-weight: 700; color: var(--text-soft); text-align: center; }
+  .sun-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5vh; }
+  .sun-row  { display: flex; gap: 3vw; }
+  .sun-half {
+    flex: 1; border-radius: 3vw; padding: 2.5vh 3vw; text-align: center;
+    background: linear-gradient(135deg, #fffbea, #fff3d6);
+    border: 0.5vw solid var(--yellow);
+  }
+  .sun-half:last-child { background: linear-gradient(135deg,#f3eeff,#ede4ff); border-color: var(--lav); }
+  .sun-icon { font-size: 6vh; display: block; margin-bottom: 1vh; }
+  .sun-time { font-family: 'Zen Maru Gothic', sans-serif; font-size: 5.5vh; font-weight: 700; color: var(--text); }
+  .sun-lbl  { font-size: 1.3vh; font-weight: 900; color: var(--soft); text-transform: uppercase; letter-spacing: 0.15em; margin-top: 0.6vh; }
+  .sun-bar-wrap {
+    position: relative; height: 1.2vh; background: var(--pink-lt);
+    border-radius: 1vh; overflow: hidden;
+  }
+  .sun-bar { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg,var(--yellow),var(--peach)); border-radius: 1vh; }
+  .sun-dot  {
+    position: absolute; top: 50%;
+    width: 2.4vh; height: 2.4vh; background: var(--yellow);
+    border: 0.4vh solid white; border-radius: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    box-shadow: 0 0 1.5vh rgba(253,230,138,0.9);
+  }
+  .sun-dl   { font-size: 1.8vh; font-weight: 800; color: var(--soft); text-align: center; }
 
   /* ── Hourly ── */
-  .hourly-scroll { display: flex; gap: 9px; overflow-x: auto; padding-bottom: 6px; flex: 1; scrollbar-width: thin; scrollbar-color: var(--pink-lt) transparent; }
-  .hourly-scroll::-webkit-scrollbar { height: 4px; }
-  .hourly-scroll::-webkit-scrollbar-thumb { background: var(--pink-lt); border-radius: 4px; }
-  .hour-tile { background: var(--pink-bg); border: 2px solid var(--pink-lt); border-radius: 14px; padding: 11px 9px; text-align: center; min-width: 60px; flex-shrink: 0; transition: border-color 0.2s, transform 0.2s; }
-  .hour-tile:hover { border-color: var(--pink); transform: translateY(-3px); }
-  .hour-tile.now-tile { border-color: var(--pink); background: #fff0f5; }
-  .hour-time { font-size: 10px; font-weight: 800; color: var(--text-soft); }
-  .hour-icon { font-size: 22px; margin: 4px 0; display: block; }
-  .hour-temp { font-size: 14px; font-weight: 900; color: var(--text); }
-  .hour-precip { font-size: 9px; font-weight: 700; color: var(--sky); margin-top: 2px; min-height: 13px; }
+  .hour-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1.2vh; flex: 1; align-content: start;
+  }
+  .h-tile {
+    background: var(--pink-bg); border: 0.4vw solid var(--pink-lt);
+    border-radius: 2.5vw; padding: 1.5vh 1vw; text-align: center;
+  }
+  .h-tile.now { border-color: var(--pink); background: #fff0f5; }
+  .h-time     { font-size: 1.3vh; font-weight: 900; color: var(--soft); }
+  .h-icon     { font-size: 3.5vh; margin: 0.6vh 0; display: block; }
+  .h-temp     { font-size: 2.2vh; font-weight: 900; color: var(--text); }
+  .h-precip   { font-size: 1.3vh; font-weight: 700; color: var(--sky); margin-top: 0.3vh; min-height: 1.8vh; }
 
   /* ── Daily ── */
-  .daily-list { display: flex; flex-direction: column; gap: 7px; flex: 1; }
-  .daily-row { display: flex; align-items: center; gap: 9px; background: var(--pink-bg); border: 1.5px solid var(--pink-lt); border-radius: 14px; padding: 9px 12px; transition: border-color 0.2s, transform 0.15s; }
-  .daily-row:hover { border-color: var(--pink); transform: translateX(3px); }
-  .daily-day { font-size: 12px; font-weight: 800; color: var(--text-soft); width: 50px; flex-shrink: 0; }
-  .daily-icon { font-size: 20px; flex-shrink: 0; }
-  .daily-bar-wrap { flex: 1; position: relative; height: 6px; border-radius: 10px; background: var(--pink-lt); overflow: hidden; }
-  .daily-bar { position: absolute; height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--sky), var(--pink)); }
-  .daily-temps { display: flex; gap: 9px; flex-shrink: 0; }
-  .daily-max { font-size: 13px; font-weight: 900; color: var(--text); }
-  .daily-min { font-size: 13px; font-weight: 700; color: var(--text-soft); }
-  .daily-precip { font-size: 10px; font-weight: 700; color: var(--sky); width: 36px; text-align: right; flex-shrink: 0; }
+  .day-list { display: flex; flex-direction: column; gap: 1.2vh; flex: 1; }
+  .day-row  {
+    display: flex; align-items: center; gap: 2vw;
+    background: var(--pink-bg); border: 0.4vw solid var(--pink-lt);
+    border-radius: 3vw; padding: 1.4vh 3vw; flex: 1;
+  }
+  .day-name  { font-size: 1.8vh; font-weight: 900; color: var(--soft); width: 14vw; flex-shrink: 0; }
+  .day-icon  { font-size: 3vh; flex-shrink: 0; }
+  .day-bar-w { flex: 1; position: relative; height: 1vh; border-radius: 1vh; background: var(--pink-lt); overflow: hidden; }
+  .day-bar   { position: absolute; height: 100%; border-radius: 1vh; background: linear-gradient(90deg,var(--sky),var(--pink)); }
+  .day-temps { display: flex; gap: 2vw; flex-shrink: 0; }
+  .day-max   { font-size: 2vh; font-weight: 900; color: var(--text); min-width: 8vw; text-align: right; }
+  .day-min   { font-size: 2vh; font-weight: 700; color: var(--soft); min-width: 8vw; }
+  .day-mm    { font-size: 1.4vh; font-weight: 700; color: var(--sky); width: 10vw; text-align: right; flex-shrink: 0; }
 
   /* Loading */
-  .loading { text-align: center; font-size: 16px; font-weight: 700; color: var(--text-soft); padding: 16px 0; animation: bounce 1s ease-in-out infinite alternate; flex: 1; display: flex; align-items: center; justify-content: center; }
-  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-7px)} }
+  .loading {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 2vh; font-weight: 800; color: var(--soft);
+    animation: bob2 0.9s ease-in-out infinite alternate;
+  }
+  @keyframes bob2 { from{transform:translateY(0)} to{transform:translateY(-1vh)} }
 
-  /* Footer */
-  .footer { margin-top: 14px; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 580px; position: relative; z-index: 10; }
-  .footer-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-soft); display: flex; align-items: center; gap: 5px; }
-  .heart { display: inline-block; color: var(--pink); animation: heartbeat 1.4s ease-in-out infinite; }
-  @keyframes heartbeat { 0%,100%{transform:scale(1)} 14%{transform:scale(1.35)} 28%{transform:scale(1)} 42%{transform:scale(1.2)} }
+  /* Pause badge */
+  .pause {
+    position: absolute; top: 1.5vh; right: 4vw; z-index: 20;
+    background: var(--pink-lt); border-radius: 2vw;
+    padding: 0.5vh 2vw; font-size: 1.3vh; font-weight: 900;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--pink); opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  }
+  .screen:hover .pause { opacity: 1; }
+
+  /* Heart */
+  .heart { color: var(--pink); animation: hb 1.4s ease-in-out infinite; display: inline-block; }
+  @keyframes hb { 0%,100%{transform:scale(1)} 14%{transform:scale(1.3)} 28%{transform:scale(1)} 42%{transform:scale(1.15)} }
 </style>
 </head>
 <body>
+<div class="screen" id="screen">
+  <div class="stars" id="stars"></div>
+  <div class="pause" id="pause-badge">⏸ pauset</div>
 
-<div class="stars" id="stars"></div>
+  <div class="rainbow"></div>
 
-<div class="carousel-outer" id="carousel-outer">
-  <!-- Progress bar -->
-  <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
-  <!-- Label -->
-  <div class="slide-label" id="slide-label"></div>
-  <!-- Nav arrows -->
-  <div class="nav-arrows">
-    <button class="nav-btn" onclick="goSlide(-1)">‹</button>
-    <button class="nav-btn" onclick="goSlide(1)">›</button>
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div class="h-loc">🗺️ Vålerenga · Oslo</div>
+      <div class="h-name">Vær ✿</div>
+    </div>
+    <div class="h-right">
+      <div class="h-date" id="hdate"></div>
+      <div class="h-day"  id="hday"></div>
+    </div>
+  </header>
+
+  <!-- LABEL + PROGRESS -->
+  <div class="top-bar">
+    <div class="label-row">
+      <div class="slide-label" id="slide-label"></div>
+      <div class="slide-count" id="slide-count"></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
   </div>
-  <!-- Pause badge -->
-  <div class="pause-badge">⏸ pauset</div>
 
-  <div class="slides-viewport">
-    <div class="slides-track" id="slides-track">
+  <!-- CAROUSEL -->
+  <div class="carousel">
+    <div class="track" id="track">
 
-      <!-- 0: Hero -->
+      <!-- 0 Hero -->
       <div class="slide">
-        <div class="card" data-label="🗺️ Vålerenga, Oslo">
+        <div class="card" data-label="🌤️ Været nå">
           <div id="hero-inner"><div class="loading">✨ Laster vær… ✨</div></div>
         </div>
       </div>
 
-      <!-- 1: Calendar -->
+      <!-- 1 Calendar -->
       <div class="slide">
         <div class="card" data-label="📅 Kalender">
           <div class="card-title">📅 Kalender</div>
-          <div class="cal-header">
-            <div class="cal-month-name" id="cal-month-name">…</div>
-            <div class="cal-nav">
+          <div class="cal-head">
+            <div class="cal-mname" id="cal-mname"></div>
+            <div class="cal-navs">
               <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
               <button class="cal-btn" onclick="changeMonth(1)">›</button>
             </div>
@@ -327,39 +391,41 @@
         </div>
       </div>
 
-      <!-- 2: Details -->
+      <!-- 2 Details -->
       <div class="slide">
         <div class="card" data-label="🌡️ Detaljer">
           <div class="card-title">🌡️ Detaljer</div>
-          <div class="detail-grid" id="detail-grid">
+          <div class="det-grid" id="det-grid">
             <div class="loading" style="grid-column:1/-1">✨ Laster… ✨</div>
           </div>
         </div>
       </div>
 
-      <!-- 3: Sun -->
+      <!-- 3 Sun -->
       <div class="slide">
         <div class="card" data-label="☀️ Sol i dag">
           <div class="card-title">☀️ Sol i dag</div>
-          <div id="sun-content"><div class="loading">✨ Laster… ✨</div></div>
-        </div>
-      </div>
-
-      <!-- 4: Hourly -->
-      <div class="slide">
-        <div class="card" data-label="🕐 Timesvarsel">
-          <div class="card-title">🕐 Timesvarsel (24t)</div>
-          <div class="hourly-scroll" id="hourly-scroll">
+          <div class="sun-body" id="sun-body">
             <div class="loading">✨ Laster… ✨</div>
           </div>
         </div>
       </div>
 
-      <!-- 5: Daily -->
+      <!-- 4 Hourly -->
+      <div class="slide">
+        <div class="card" data-label="🕐 Timesvarsel">
+          <div class="card-title">🕐 Timesvarsel — neste 12t</div>
+          <div class="hour-grid" id="hour-grid">
+            <div class="loading" style="grid-column:1/-1">✨ Laster… ✨</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 Daily -->
       <div class="slide">
         <div class="card" data-label="📆 7-dagers varsel">
           <div class="card-title">📆 7-dagers varsel</div>
-          <div class="daily-list" id="daily-list">
+          <div class="day-list" id="day-list">
             <div class="loading">✨ Laster… ✨</div>
           </div>
         </div>
@@ -368,321 +434,237 @@
     </div>
   </div>
 
-  <div class="dots" id="dots"></div>
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="dots" id="dots"></div>
+    <div class="navs">
+      <button class="nav-btn" onclick="goSlide(-1)">‹</button>
+      <button class="nav-btn" onclick="goSlide(1)">›</button>
+    </div>
+  </div>
 </div>
 
-<footer class="footer">
-  <div class="footer-label"><span class="heart">♥</span> Vålerenga, Oslo · live</div>
-  <div class="footer-label" id="last-updated"></div>
-</footer>
-
 <script>
-  const LAT = 59.9127, LON = 10.7745;
-  const SLIDE_DURATION = 5000;
+  const LAT=59.9127, LON=10.7745, DUR=5000;
 
-  // ── Sparkles ──
-  const starChars = ['✦','✧','⋆','·','✩','★','♡','✿','◌','❋'];
-  const starsEl = document.getElementById('stars');
-  for (let i = 0; i < 24; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.textContent = starChars[Math.floor(Math.random() * starChars.length)];
-    s.style.left = Math.random() * 100 + 'vw';
-    s.style.fontSize = (11 + Math.random() * 16) + 'px';
-    s.style.color = ['#ff8fab','#c8b6e2','#b5ead7','#fde68a','#bde0fe'][Math.floor(Math.random()*5)];
-    s.style.animationDuration = (14 + Math.random() * 20) + 's';
-    s.style.animationDelay = (-Math.random() * 28) + 's';
+  // Stars
+  const SC='✦✧⋆·✩★♡✿◌❋'.split('');
+  const starsEl=document.getElementById('stars');
+  for(let i=0;i<22;i++){
+    const s=document.createElement('div'); s.className='star';
+    s.textContent=SC[Math.floor(Math.random()*SC.length)];
+    s.style.cssText=`left:${Math.random()*100}%;font-size:${10+Math.random()*12}px;`
+      +`color:${'#ff8fab,#c8b6e2,#b5ead7,#fde68a,#bde0fe'.split(',')[Math.floor(Math.random()*5)]};`
+      +`animation-duration:${18+Math.random()*20}s;animation-delay:${-Math.random()*32}s`;
     starsEl.appendChild(s);
   }
 
-  // ── CAROUSEL ──────────────────────────────────────────────────
-  const track = document.getElementById('slides-track');
-  const slideEls = Array.from(document.querySelectorAll('.slide'));
-  const cards = slideEls.map(s => s.querySelector('.card'));
-  const total = slideEls.length;
-  let current = 0;
-  let paused = false;
-  let autoTimer = null;
-  let progressStart = null;
-  let progressRemaining = SLIDE_DURATION;
+  // Date
+  const DAYS=['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
+  const MSHORT=['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+  const MFULL=['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+  function updateDate(){
+    const n=new Date();
+    document.getElementById('hdate').textContent=`${n.getDate()}. ${MSHORT[n.getMonth()]} ${n.getFullYear()}`;
+    document.getElementById('hday').textContent=DAYS[n.getDay()];
+  }
+  updateDate(); setInterval(updateDate,60000);
 
-  const progressBar = document.getElementById('progress-bar');
-  const slideLabel  = document.getElementById('slide-label');
-  const dotsEl      = document.getElementById('dots');
+  // Carousel
+  const track=document.getElementById('track');
+  const slides=Array.from(document.querySelectorAll('.slide'));
+  const cards=slides.map(s=>s.querySelector('.card'));
+  const N=slides.length;
+  let cur=0, paused=false, timer=null, pStart=null, pRem=DUR;
+  const pBar=document.getElementById('prog-bar');
+  const lbl=document.getElementById('slide-label');
+  const cnt=document.getElementById('slide-count');
+  const dotsEl=document.getElementById('dots');
 
-  // Build dots
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('button');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.addEventListener('click', () => jumpTo(i));
-    dotsEl.appendChild(d);
+  for(let i=0;i<N;i++){
+    const d=document.createElement('button'); d.className='dot'+(i===0?' active':'');
+    d.addEventListener('click',()=>jumpTo(i)); dotsEl.appendChild(d);
+  }
+  const allDots=()=>Array.from(dotsEl.querySelectorAll('.dot'));
+
+  function setSlide(i){
+    cur=((i%N)+N)%N;
+    track.style.transform=`translateX(-${cur*100}%)`;
+    allDots().forEach((d,j)=>d.classList.toggle('active',j===cur));
+    lbl.textContent=cards[cur].dataset.label||'';
+    cnt.textContent=`${cur+1} / ${N}`;
+  }
+  function jumpTo(i){ setSlide(i); resetProg(DUR); }
+  function goSlide(d){ setSlide(cur+d); resetProg(DUR); }
+
+  function resetProg(d){
+    clearTimeout(timer);
+    pBar.style.transition='none'; pBar.style.width='0%'; pBar.offsetHeight;
+    pRem=d; if(!paused) startProg(d);
+  }
+  function startProg(d){
+    pBar.style.transition=`width ${d}ms linear`; pBar.style.width='100%';
+    pStart=performance.now();
+    timer=setTimeout(()=>{ setSlide(cur+1); resetProg(DUR); },d);
   }
 
-  function getDots() { return Array.from(dotsEl.querySelectorAll('.dot')); }
-
-  function setSlide(idx) {
-    current = ((idx % total) + total) % total;
-    track.style.transform = `translateX(-${current * 100}%)`;
-    getDots().forEach((d, i) => d.classList.toggle('active', i === current));
-    slideLabel.textContent = cards[current].dataset.label || '';
-  }
-
-  function jumpTo(idx) {
-    setSlide(idx);
-    resetProgress(SLIDE_DURATION);
-  }
-
-  function goSlide(delta) {
-    setSlide(current + delta);
-    resetProgress(SLIDE_DURATION);
-  }
-
-  // Progress bar
-  function resetProgress(duration) {
-    clearTimeout(autoTimer);
-    progressBar.style.transition = 'none';
-    progressBar.style.width = '0%';
-    progressBar.offsetHeight; // reflow
-    progressRemaining = duration;
-    if (!paused) startProgress(duration);
-  }
-
-  function startProgress(duration) {
-    progressBar.style.transition = `width ${duration}ms linear`;
-    progressBar.style.width = '100%';
-    progressStart = performance.now();
-    autoTimer = setTimeout(() => {
-      setSlide(current + 1);
-      resetProgress(SLIDE_DURATION);
-    }, duration);
-  }
-
-  // Pause on hover
-  const outer = document.getElementById('carousel-outer');
-  outer.addEventListener('mouseenter', () => {
-    if (paused) return;
-    paused = true;
-    clearTimeout(autoTimer);
-    const elapsed = performance.now() - progressStart;
-    progressRemaining = Math.max(0, progressRemaining - elapsed);
-    // freeze bar
-    const w = getComputedStyle(progressBar).width;
-    const pw = getComputedStyle(progressBar.parentElement).width;
-    const pct = (parseFloat(w) / parseFloat(pw) * 100).toFixed(2);
-    progressBar.style.transition = 'none';
-    progressBar.style.width = pct + '%';
+  const sc=document.getElementById('screen');
+  sc.addEventListener('mouseenter',()=>{
+    if(paused)return; paused=true; clearTimeout(timer);
+    const el=performance.now()-pStart;
+    pRem=Math.max(0,pRem-el);
+    const w=getComputedStyle(pBar).width, pw=getComputedStyle(pBar.parentElement).width;
+    pBar.style.transition='none'; pBar.style.width=(parseFloat(w)/parseFloat(pw)*100).toFixed(2)+'%';
+  });
+  sc.addEventListener('mouseleave',()=>{
+    if(!paused)return; paused=false; startProg(pRem);
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight')goSlide(1);
+    if(e.key==='ArrowLeft')goSlide(-1);
   });
 
-  outer.addEventListener('mouseleave', () => {
-    if (!paused) return;
-    paused = false;
-    startProgress(progressRemaining);
-  });
+  setSlide(0); resetProg(DUR);
 
-  // Keyboard nav
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') goSlide(1);
-    if (e.key === 'ArrowLeft')  goSlide(-1);
-  });
-
-  // Init
-  setSlide(0);
-  resetProgress(SLIDE_DURATION);
-
-  // ── CALENDAR ──────────────────────────────────────────────────
-  const MONTHS_NO_FULL = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
-  const MONTHS_NO_SHORT = ['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
-  const WEEKDAYS_NO = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
-  let calViewDate = new Date();
-
-  function renderCalendar() {
-    const today = new Date();
-    const year = calViewDate.getFullYear(), month = calViewDate.getMonth();
-    document.getElementById('cal-month-name').textContent = `${MONTHS_NO_FULL[month]} ${year}`;
-    const grid = document.getElementById('cal-grid');
-    grid.innerHTML = '';
-    ['Man','Tir','Ons','Tor','Fre','Lør','Søn'].forEach((d,i) => {
-      const el = document.createElement('div');
-      el.className = 'cal-dow';
-      if (i >= 5) el.style.color = 'var(--pink)';
-      el.textContent = d;
-      grid.appendChild(el);
+  // Calendar
+  let calDate=new Date();
+  function renderCal(){
+    const today=new Date(), y=calDate.getFullYear(), m=calDate.getMonth();
+    document.getElementById('cal-mname').textContent=`${MFULL[m]} ${y}`;
+    const g=document.getElementById('cal-grid'); g.innerHTML='';
+    ['Man','Tir','Ons','Tor','Fre','Lør','Søn'].forEach((d,i)=>{
+      const el=document.createElement('div'); el.className='cal-dow';
+      if(i>=5)el.style.color='var(--pink)'; el.textContent=d; g.appendChild(el);
     });
-    let startDow = (new Date(year, month, 1).getDay() + 6) % 7;
-    const dim = new Date(year, month+1, 0).getDate();
-    const prevDays = new Date(year, month, 0).getDate();
-    for (let i = 0; i < startDow; i++) {
-      const el = document.createElement('div');
-      el.className = 'cal-day other-month';
-      el.textContent = prevDays - startDow + 1 + i;
-      grid.appendChild(el);
+    const sd=(new Date(y,m,1).getDay()+6)%7, dim=new Date(y,m+1,0).getDate(), prev=new Date(y,m,0).getDate();
+    for(let i=0;i<sd;i++){const el=document.createElement('div');el.className='cal-day other';el.textContent=prev-sd+1+i;g.appendChild(el);}
+    for(let d=1;d<=dim;d++){
+      const el=document.createElement('div');const dow=new Date(y,m,d).getDay();
+      el.className='cal-day'+(dow===0||dow===6?' wkend':'');el.textContent=d;
+      if(d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear())el.classList.add('today');
+      g.appendChild(el);
     }
-    for (let d = 1; d <= dim; d++) {
-      const el = document.createElement('div');
-      const dow = new Date(year, month, d).getDay();
-      el.className = 'cal-day' + (dow===0||dow===6?' sunday':'');
-      el.textContent = d;
-      if (d===today.getDate() && month===today.getMonth() && year===today.getFullYear())
-        el.classList.add('today');
-      grid.appendChild(el);
-    }
-    const rem = (startDow+dim)%7===0 ? 0 : 7-((startDow+dim)%7);
-    for (let d = 1; d <= rem; d++) {
-      const el = document.createElement('div');
-      el.className = 'cal-day other-month';
-      el.textContent = d;
-      grid.appendChild(el);
-    }
+    const rem=(sd+dim)%7===0?0:7-(sd+dim)%7;
+    for(let d=1;d<=rem;d++){const el=document.createElement('div');el.className='cal-day other';el.textContent=d;g.appendChild(el);}
   }
-  function changeMonth(delta) {
-    calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth()+delta, 1);
-    renderCalendar();
+  function changeMonth(d){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1);renderCal();}
+  renderCal();
+
+  // Weather helpers
+  function wInfo(c,day){
+    const m={0:{i:day?'☀️':'🌙',l:'Klarvær'},1:{i:day?'🌤️':'🌙',l:'Mest klart'},2:{i:'⛅',l:'Delvis skyet'},3:{i:'☁️',l:'Overskyet'},
+      45:{i:'🌫️',l:'Tåke'},48:{i:'🌫️',l:'Rimtåke'},51:{i:'🌦️',l:'Lett yr'},53:{i:'🌦️',l:'Yr'},55:{i:'🌧️',l:'Kraftig yr'},
+      61:{i:'🌧️',l:'Lett regn'},63:{i:'🌧️',l:'Regn'},65:{i:'🌧️',l:'Kraftig regn'},71:{i:'🌨️',l:'Lett snø'},
+      73:{i:'❄️',l:'Snø'},75:{i:'❄️',l:'Kraftig snø'},77:{i:'🌨️',l:'Snøkorn'},80:{i:'🌦️',l:'Regnbyger'},
+      81:{i:'🌧️',l:'Kraftige byger'},82:{i:'⛈️',l:'Voldsomme byger'},85:{i:'🌨️',l:'Snøbyger'},
+      86:{i:'🌨️',l:'Kraftige snøbyger'},95:{i:'⛈️',l:'Tordenvær'},96:{i:'⛈️',l:'Torden og hagl'},99:{i:'⛈️',l:'Kraftig torden'}};
+    return m[c]||{i:'🌡️',l:'Ukjent'};
   }
-  renderCalendar();
+  function wDir(d){return['N','NØ','Ø','SØ','S','SV','V','NV'][Math.round(d/45)%8];}
+  function f2(n){return String(n).padStart(2,'0');}
+  function fT(iso){const d=new Date(iso);return`${f2(d.getHours())}:${f2(d.getMinutes())}`;}
+  function uvL(u){if(u<=2)return'Lav';if(u<=5)return'Moderat';if(u<=7)return'Høy';if(u<=10)return'Svært høy';return'Ekstremt';}
+  function bf(ms){const sc=[0.3,1.6,3.4,5.5,8,10.8,13.9,17.2,20.8,24.5,28.5,32.7];let b=0;sc.forEach((v,i)=>{if(ms>=v)b=i+1;});return b;}
 
-  // ── WEATHER HELPERS ───────────────────────────────────────────
-  function weatherInfo(code, isDay) {
-    const m = {
-      0:{icon:isDay?'☀️':'🌙',label:'Klarvær'}, 1:{icon:isDay?'🌤️':'🌙',label:'Mest klart'},
-      2:{icon:'⛅',label:'Delvis skyet'}, 3:{icon:'☁️',label:'Overskyet'},
-      45:{icon:'🌫️',label:'Tåke'}, 48:{icon:'🌫️',label:'Rimtåke'},
-      51:{icon:'🌦️',label:'Lett yr'}, 53:{icon:'🌦️',label:'Yr'}, 55:{icon:'🌧️',label:'Kraftig yr'},
-      61:{icon:'🌧️',label:'Lett regn'}, 63:{icon:'🌧️',label:'Regn'}, 65:{icon:'🌧️',label:'Kraftig regn'},
-      71:{icon:'🌨️',label:'Lett snø'}, 73:{icon:'❄️',label:'Snø'}, 75:{icon:'❄️',label:'Kraftig snø'},
-      77:{icon:'🌨️',label:'Snøkorn'}, 80:{icon:'🌦️',label:'Regnbyger'},
-      81:{icon:'🌧️',label:'Kraftige byger'}, 82:{icon:'⛈️',label:'Voldsomme byger'},
-      85:{icon:'🌨️',label:'Snøbyger'}, 86:{icon:'🌨️',label:'Kraftige snøbyger'},
-      95:{icon:'⛈️',label:'Tordenvær'}, 96:{icon:'⛈️',label:'Torden og hagl'}, 99:{icon:'⛈️',label:'Kraftig torden'},
-    };
-    return m[code]||{icon:'🌡️',label:'Ukjent'};
-  }
-  function windDir(deg){return['N','NØ','Ø','SØ','S','SV','V','NV'][Math.round(deg/45)%8];}
-  function fmt2(n){return String(n).padStart(2,'0');}
-  function fmtTime(iso){const d=new Date(iso);return`${fmt2(d.getHours())}:${fmt2(d.getMinutes())}`;}
-  function uvLabel(uv){if(uv<=2)return'Lav';if(uv<=5)return'Moderat';if(uv<=7)return'Høy';if(uv<=10)return'Svært høy';return'Ekstremt';}
-  function beaufort(ms){const sc=[0.3,1.6,3.4,5.5,8,10.8,13.9,17.2,20.8,24.5,28.5,32.7];let b=0;sc.forEach((v,i)=>{if(ms>=v)b=i+1;});return b;}
-
-  // ── LOAD WEATHER ──────────────────────────────────────────────
-  async function loadWeather() {
-    try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
-        `&current=temperature_2m,apparent_temperature,weathercode,windspeed_10m,winddirection_10m,` +
-        `relativehumidity_2m,is_day,precipitation,surface_pressure,visibility,uv_index,cloudcover` +
-        `&hourly=temperature_2m,weathercode,precipitation_probability,windspeed_10m,is_day` +
-        `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset` +
-        `&wind_speed_unit=ms&timezone=Europe%2FOslo&forecast_days=7`;
-
-      const res = await fetch(url);
-      const data = await res.json();
-      const c = data.current, h = data.hourly, d = data.daily;
-      const now = new Date();
-
-      const info = weatherInfo(c.weathercode, c.is_day);
-      const temp     = Math.round(c.temperature_2m);
-      const feels    = Math.round(c.apparent_temperature);
-      const wind     = c.windspeed_10m.toFixed(1);
-      const dir      = windDir(c.winddirection_10m);
-      const hum      = c.relativehumidity_2m;
-      const precip   = c.precipitation;
-      const pressure = Math.round(c.surface_pressure);
-      const vis      = c.visibility!=null?(c.visibility/1000).toFixed(1):'–';
-      const uv       = c.uv_index!=null?Math.round(c.uv_index):'–';
-      const cloud    = c.cloudcover!=null?c.cloudcover:'–';
-      const bf       = beaufort(c.windspeed_10m);
+  async function loadWeather(){
+    try{
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`
+        +`&current=temperature_2m,apparent_temperature,weathercode,windspeed_10m,winddirection_10m,`
+        +`relativehumidity_2m,is_day,precipitation,surface_pressure,visibility,uv_index,cloudcover`
+        +`&hourly=temperature_2m,weathercode,precipitation_probability,is_day`
+        +`&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset`
+        +`&wind_speed_unit=ms&timezone=Europe%2FOslo&forecast_days=7`;
+      const data=await(await fetch(url)).json();
+      const c=data.current,h=data.hourly,d=data.daily,now=new Date();
+      const info=wInfo(c.weathercode,c.is_day);
+      const temp=Math.round(c.temperature_2m), feels=Math.round(c.apparent_temperature);
+      const wind=c.windspeed_10m.toFixed(1), dir=wDir(c.winddirection_10m);
+      const hum=c.relativehumidity_2m, precip=c.precipitation;
+      const pres=Math.round(c.surface_pressure);
+      const vis=c.visibility!=null?(c.visibility/1000).toFixed(1):'–';
+      const uv=c.uv_index!=null?Math.round(c.uv_index):'–';
+      const cloud=c.cloudcover!=null?c.cloudcover:'–';
+      const bft=bf(c.windspeed_10m);
 
       // Hero
-      document.getElementById('hero-inner').innerHTML = `
-        <div class="hero-wrap">
-          <div class="hero-top">
-            <div class="weather-icon">${info.icon}</div>
-            <div>
-              <div class="location-tag">🗺️ Vålerenga, Oslo</div>
-              <div class="temp">${temp}<sup>°C</sup></div>
-              <div class="condition">${info.label}</div>
-              <div class="feels-like">Føles som ${feels}°C &nbsp;·&nbsp; ${WEEKDAYS_NO[now.getDay()]} ${now.getDate()}. ${MONTHS_NO_SHORT[now.getMonth()]}</div>
-            </div>
-          </div>
+      document.getElementById('hero-inner').innerHTML=`
+        <div class="hero-body">
+          <div class="hero-icon">${info.i}</div>
+          <div class="hero-temp-row"><div class="hero-temp">${temp}</div><div class="hero-deg">°C</div></div>
+          <div class="hero-cond">${info.l}</div>
+          <div class="hero-feel">Føles som ${feels}°C · ${DAYS[now.getDay()]} ${now.getDate()}. ${MSHORT[now.getMonth()]}</div>
           <div class="hero-pills">
             <div class="hero-pill">💨 ${wind} m/s ${dir}</div>
             <div class="hero-pill">💧 ${hum}%</div>
             <div class="hero-pill">🌧️ ${precip} mm</div>
-            <div class="hero-pill">🌬️ Bf ${bf}</div>
+            <div class="hero-pill">🌬️ Bf ${bft}</div>
           </div>
         </div>`;
 
       // Details
-      document.getElementById('detail-grid').innerHTML = `
-        <div class="d-tile"><span class="d-icon">🌡️</span><span class="d-val">${pressure} hPa</span><span class="d-lbl">Lufttrykk</span></div>
-        <div class="d-tile"><span class="d-icon">👁️</span><span class="d-val">${vis} km</span><span class="d-lbl">Sikt</span></div>
-        <div class="d-tile"><span class="d-icon">🔆</span><span class="d-val">${uv}</span><span class="d-lbl">UV · ${uv!=='–'?uvLabel(uv):'–'}</span></div>
-        <div class="d-tile"><span class="d-icon">☁️</span><span class="d-val">${cloud}%</span><span class="d-lbl">Skydekke</span></div>
-        <div class="d-tile"><span class="d-icon">💨</span><span class="d-val">${wind} m/s</span><span class="d-lbl">Vindstyrke</span></div>
-        <div class="d-tile"><span class="d-icon">💧</span><span class="d-val">${hum}%</span><span class="d-lbl">Fuktighet</span></div>`;
+      document.getElementById('det-grid').innerHTML=`
+        <div class="d-tile"><div class="d-icon">🌡️</div><div class="d-val">${pres} hPa</div><div class="d-lbl">Lufttrykk</div></div>
+        <div class="d-tile"><div class="d-icon">👁️</div><div class="d-val">${vis} km</div><div class="d-lbl">Sikt</div></div>
+        <div class="d-tile"><div class="d-icon">🔆</div><div class="d-val">${uv}</div><div class="d-lbl">UV · ${uv!=='–'?uvL(uv):'–'}</div></div>
+        <div class="d-tile"><div class="d-icon">☁️</div><div class="d-val">${cloud}%</div><div class="d-lbl">Skydekke</div></div>
+        <div class="d-tile"><div class="d-icon">💨</div><div class="d-val">${wind} m/s</div><div class="d-lbl">Vind</div></div>
+        <div class="d-tile"><div class="d-icon">💧</div><div class="d-val">${hum}%</div><div class="d-lbl">Fuktighet</div></div>`;
 
       // Sun
-      const srMs = new Date(d.sunrise[0]).getTime(), ssMs = new Date(d.sunset[0]).getTime();
-      const totalMs = ssMs - srMs;
-      const pct = totalMs > 0 ? (Math.max(0,Math.min(Date.now()-srMs,totalMs))/totalMs*100).toFixed(1) : 0;
-      const dlMin = Math.round(totalMs/60000);
-      document.getElementById('sun-content').innerHTML = `
+      const srMs=new Date(d.sunrise[0]).getTime(), ssMs=new Date(d.sunset[0]).getTime();
+      const tMs=ssMs-srMs, pct=tMs>0?(Math.max(0,Math.min(Date.now()-srMs,tMs))/tMs*100).toFixed(1):0;
+      const dlM=Math.round(tMs/60000);
+      document.getElementById('sun-body').innerHTML=`
         <div class="sun-row">
-          <div class="sun-half"><span class="sun-icon">🌅</span><div class="sun-time">${fmtTime(d.sunrise[0])}</div><div class="sun-lbl">Soloppgang</div></div>
-          <div class="sun-half"><span class="sun-icon">🌇</span><div class="sun-time">${fmtTime(d.sunset[0])}</div><div class="sun-lbl">Solnedgang</div></div>
+          <div class="sun-half"><span class="sun-icon">🌅</span><div class="sun-time">${fT(d.sunrise[0])}</div><div class="sun-lbl">Soloppgang</div></div>
+          <div class="sun-half"><span class="sun-icon">🌇</span><div class="sun-time">${fT(d.sunset[0])}</div><div class="sun-lbl">Solnedgang</div></div>
         </div>
-        <div class="sun-bar-wrap">
-          <div class="sun-bar" style="width:${pct}%"></div>
-          <div class="sun-bar-dot" style="left:${pct}%"></div>
-        </div>
-        <div class="sun-daylight">☀️ ${Math.floor(dlMin/60)}t ${dlMin%60}m dagslys</div>`;
+        <div>
+          <div class="sun-bar-wrap"><div class="sun-bar" style="width:${pct}%"></div><div class="sun-dot" style="left:${pct}%"></div></div>
+          <div class="sun-dl" style="margin-top:1vh">☀️ ${Math.floor(dlM/60)}t ${dlM%60}m dagslys</div>
+        </div>`;
 
       // Hourly
-      const nowIso = new Date().toISOString().slice(0,13);
-      let si = h.time.findIndex(t=>t.slice(0,13)>=nowIso);
-      if(si<0)si=0;
-      document.getElementById('hourly-scroll').innerHTML =
-        h.time.slice(si,si+24).map((t,i)=>{
-          const idx=si+i;
-          const hi=weatherInfo(h.weathercode[idx],h.is_day[idx]);
-          const pp=h.precipitation_probability[idx];
-          return `<div class="hour-tile${i===0?' now-tile':''}">
-            <div class="hour-time">${i===0?'Nå':fmt2(new Date(t).getHours())+':00'}</div>
-            <span class="hour-icon">${hi.icon}</span>
-            <div class="hour-temp">${Math.round(h.temperature_2m[idx])}°</div>
-            <div class="hour-precip">${pp>0?'💧'+pp+'%':''}</div>
+      const nowIso=new Date().toISOString().slice(0,13);
+      let si=h.time.findIndex(t=>t.slice(0,13)>=nowIso); if(si<0)si=0;
+      document.getElementById('hour-grid').innerHTML=
+        h.time.slice(si,si+12).map((t,i)=>{
+          const idx=si+i,hi=wInfo(h.weathercode[idx],h.is_day[idx]),pp=h.precipitation_probability[idx];
+          return `<div class="h-tile${i===0?' now':''}">
+            <div class="h-time">${i===0?'Nå':f2(new Date(t).getHours())+':00'}</div>
+            <span class="h-icon">${hi.i}</span>
+            <div class="h-temp">${Math.round(h.temperature_2m[idx])}°</div>
+            <div class="h-precip">${pp>0?'💧'+pp+'%':''}</div>
           </div>`;
         }).join('');
 
       // Daily
       const allT=d.temperature_2m_max.concat(d.temperature_2m_min);
-      const gMax=Math.max(...allT), gMin=Math.min(...allT), tR=gMax-gMin||1;
-      const dNames=['Søn','Man','Tir','Ons','Tor','Fre','Lør'];
-      document.getElementById('daily-list').innerHTML =
+      const gMax=Math.max(...allT),gMin=Math.min(...allT),tR=gMax-gMin||1;
+      const DN=['Søn','Man','Tir','Ons','Tor','Fre','Lør'];
+      document.getElementById('day-list').innerHTML=
         d.time.map((date,i)=>{
           const dObj=new Date(date+'T12:00:00');
-          const nm=i===0?'I dag':i===1?'I morgen':dNames[dObj.getDay()];
-          const mx=Math.round(d.temperature_2m_max[i]), mn=Math.round(d.temperature_2m_min[i]);
-          const di=weatherInfo(d.weathercode[i],1);
-          const dp=d.precipitation_sum[i]!=null?d.precipitation_sum[i].toFixed(1):'0';
-          return `<div class="daily-row">
-            <span class="daily-day">${nm}</span>
-            <span class="daily-icon">${di.icon}</span>
-            <div class="daily-bar-wrap"><div class="daily-bar" style="left:${((mn-gMin)/tR*100).toFixed(1)}%;width:${((mx-mn)/tR*100).toFixed(1)}%"></div></div>
-            <div class="daily-temps"><span class="daily-max">${mx}°</span><span class="daily-min">${mn}°</span></div>
-            <span class="daily-precip">${dp>0?'💧'+dp+'mm':''}</span>
+          const nm=i===0?'I dag':i===1?'I morgen':DN[dObj.getDay()];
+          const mx=Math.round(d.temperature_2m_max[i]),mn=Math.round(d.temperature_2m_min[i]);
+          const di=wInfo(d.weathercode[i],1),dp=d.precipitation_sum[i]!=null?d.precipitation_sum[i].toFixed(1):'0';
+          return `<div class="day-row">
+            <span class="day-name">${nm}</span>
+            <span class="day-icon">${di.i}</span>
+            <div class="day-bar-w"><div class="day-bar" style="left:${((mn-gMin)/tR*100).toFixed(1)}%;width:${((mx-mn)/tR*100).toFixed(1)}%"></div></div>
+            <div class="day-temps"><span class="day-max">${mx}°</span><span class="day-min">${mn}°</span></div>
+            <span class="day-mm">${dp>0?'💧'+dp+'mm':''}</span>
           </div>`;
         }).join('');
 
-      document.getElementById('last-updated').textContent =
-        '✨ ' + now.toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-
-    } catch(e) {
+    }catch(e){
       console.error(e);
-      document.getElementById('hero-inner').innerHTML = `<div class="loading">😿 Kunne ikke laste vær!</div>`;
+      document.getElementById('hero-inner').innerHTML='<div class="loading">😿 Feil ved lasting!</div>';
     }
   }
 
   loadWeather();
-  setInterval(loadWeather, 15000);
+  setInterval(loadWeather,15000);
 </script>
 </body>
 </html>
